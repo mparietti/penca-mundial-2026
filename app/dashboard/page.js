@@ -49,13 +49,15 @@ export default function DashboardPage() {
         fecha_hora,
         fase,
         grupo,
+        estadio,
+        ciudad,
         estado,
         goles_local,
         goles_visitante,
         equipo_local:equipos!partidos_equipo_local_id_fkey(nombre, codigo_fifa, bandera_url),
         equipo_visitante:equipos!partidos_equipo_visitante_id_fkey(nombre, codigo_fifa, bandera_url)
       `)
-      .neq('estado', 'FINALIZADO')
+      .eq('estado', 'PROGRAMADO')
       .order('fecha_hora', { ascending: true });
 
     if (partidosError) {
@@ -109,6 +111,17 @@ export default function DashboardPage() {
   };
 
   const guardarPronostico = async (partidoId) => {
+    const partido = partidos.find((p) => p.id === partidoId);
+    const partidoComenzado = partido && new Date() >= new Date(partido.fecha_hora);
+
+    if (partidoComenzado) {
+      setMensajes((prev) => ({
+        ...prev,
+        [partidoId]: 'El partido ya comenzó. No se puede modificar el pronóstico.'
+      }));
+      return;
+    }
+
     const pronostico = pronosticos[partidoId];
 
     if (pronostico.goles_local === '' || pronostico.goles_visitante === '') {
@@ -154,7 +167,7 @@ export default function DashboardPage() {
       console.error(error);
       setMensajes((prev) => ({
         ...prev,
-        [partidoId]: 'Error al guardar el pronóstico.'
+        [partidoId]: error.message || 'Error al guardar el pronóstico.'
       }));
       return;
     }
@@ -209,7 +222,7 @@ export default function DashboardPage() {
           <Link href="/dashboard" style={activeMenuLinkStyle}>⚽ Partidos</Link>
           <Link href="/grupos" style={menuLinkStyle}>🌍 Grupos</Link>
           <Link href="/resultados" style={menuLinkStyle}>📅 Resultados</Link>
-          <Link href="/pronosticos-extras" style={menuLinkStyle}>🎯 Pronosticos extras</Link>
+          <Link href="/pronosticos-extras" style={menuLinkStyle}>🎯 Pronósticos extras</Link>
           <Link href="/posiciones" style={menuLinkStyle}>🏆 Posiciones</Link>
           <Link href="/reglas" style={menuLinkStyle}>📋 Reglas de puntuación</Link>
           <Link href="/noticias" style={menuLinkStyle}>📰 Noticias</Link>
@@ -237,6 +250,17 @@ export default function DashboardPage() {
             </div>
           </div>
 
+          <div style={rulesBoxStyle}>
+            <h3 style={rulesTitleStyle}>Sistema de puntuación</h3>
+
+            <div style={rulesGridStyle}>
+              <div style={ruleItemStyle}><strong>8</strong><span>Exacto</span></div>
+              <div style={ruleItemStyle}><strong>5</strong><span>Diferencia</span></div>
+              <div style={ruleItemStyle}><strong>3</strong><span>Ganador</span></div>
+              <div style={ruleItemStyle}><strong>0</strong><span>Sin acierto</span></div>
+            </div>
+          </div>
+
           {partidos.length === 0 && (
             <div style={emptyStyle}>
               No hay partidos pendientes para pronosticar.
@@ -246,12 +270,27 @@ export default function DashboardPage() {
           <div style={matchesContainerStyle}>
             {partidos.map((partido) => {
               const pronostico = pronosticos[partido.id] || {};
+              const partidoComenzado = new Date() >= new Date(partido.fecha_hora);
+              const partidoEnJuego = partidoComenzado && partido.estado === 'PROGRAMADO';
+              const bloqueado = partidoComenzado || partido.estado !== 'PROGRAMADO';
+              const estadoVisual = partidoEnJuego ? 'EN JUEGO' : partido.estado;
+              const sinPronostico = !pronostico.guardado;
 
               return (
                 <div key={partido.id} style={matchCardStyle}>
                   <div style={matchHeaderStyle}>
                     <span style={groupPillStyle}>Grupo {partido.grupo}</span>
-                    <span style={dateStyle}>{formatearFecha(partido.fecha_hora)}</span>
+
+                    <div style={dateVenueStyle}>
+                      <span style={dateStyle}>{formatearFecha(partido.fecha_hora)}</span>
+
+                      {(partido.estadio || partido.ciudad) && (
+                        <span style={venueStyle}>
+                          🏟️ {partido.estadio || 'Estadio a confirmar'}
+                          {partido.ciudad ? ` · ${partido.ciudad}` : ''}
+                        </span>
+                      )}
+                    </div>
                   </div>
 
                   <div style={teamsStyle}>
@@ -287,18 +326,25 @@ export default function DashboardPage() {
                   </div>
 
                   <div style={predictionBoxStyle}>
-                    <span style={predictionLabelStyle}>Tu pronóstico</span>
+                    <span style={predictionLabelStyle}>
+                      {bloqueado ? 'Pronóstico cerrado' : 'Tu pronóstico'}
+                    </span>
 
                     <div style={predictionStyle}>
                       <input
                         type="number"
                         min="0"
-                        placeholder="0"
-                        value={pronostico.goles_local ?? ''}
+                        placeholder={sinPronostico && bloqueado ? '-' : '0'}
+                        value={sinPronostico && bloqueado ? '' : pronostico.goles_local ?? ''}
+                        disabled={bloqueado}
                         onChange={(e) =>
                           cambiarPronostico(partido.id, 'goles_local', e.target.value)
                         }
-                        style={inputStyle}
+                        style={{
+                          ...inputStyle,
+                          opacity: bloqueado ? 0.55 : 1,
+                          cursor: bloqueado ? 'not-allowed' : 'text'
+                        }}
                       />
 
                       <span style={predictionSeparatorStyle}>-</span>
@@ -306,17 +352,27 @@ export default function DashboardPage() {
                       <input
                         type="number"
                         min="0"
-                        placeholder="0"
-                        value={pronostico.goles_visitante ?? ''}
+                        placeholder={sinPronostico && bloqueado ? '-' : '0'}
+                        value={sinPronostico && bloqueado ? '' : pronostico.goles_visitante ?? ''}
+                        disabled={bloqueado}
                         onChange={(e) =>
                           cambiarPronostico(partido.id, 'goles_visitante', e.target.value)
                         }
-                        style={inputStyle}
+                        style={{
+                          ...inputStyle,
+                          opacity: bloqueado ? 0.55 : 1,
+                          cursor: bloqueado ? 'not-allowed' : 'text'
+                        }}
                       />
 
                       <button
                         onClick={() => guardarPronostico(partido.id)}
-                        style={saveButtonStyle}
+                        disabled={bloqueado}
+                        style={{
+                          ...saveButtonStyle,
+                          opacity: bloqueado ? 0.55 : 1,
+                          cursor: bloqueado ? 'not-allowed' : 'pointer'
+                        }}
                       >
                         Guardar
                       </button>
@@ -324,9 +380,17 @@ export default function DashboardPage() {
                   </div>
 
                   <div style={statusRowStyle}>
-                    <span>Estado: {partido.estado}</span>
+                    <span>Estado: {estadoVisual}</span>
 
-                    {!pronostico.guardado && (
+                    {partidoComenzado && (
+                      <span style={closedStyle}>🔒 Partido iniciado</span>
+                    )}
+
+                    {bloqueado && sinPronostico && (
+                      <span style={missedStyle}>⛔ No pronosticaste este partido</span>
+                    )}
+
+                    {!partidoComenzado && !pronostico.guardado && (
                       <span style={alertStyle}>⚠ Falta pronóstico</span>
                     )}
 
@@ -522,7 +586,10 @@ const statsMiniBoxStyle = {
   borderRadius: '22px',
   padding: '20px',
   textAlign: 'center',
-  color: '#dbeafe'
+  color: '#dbeafe',
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '4px'
 };
 
 const rulesBoxStyle = {
@@ -583,8 +650,17 @@ const matchCardStyle = {
 const matchHeaderStyle = {
   display: 'flex',
   justifyContent: 'space-between',
-  alignItems: 'center',
-  marginBottom: '18px'
+  alignItems: 'flex-start',
+  marginBottom: '18px',
+  gap: '16px'
+};
+
+const dateVenueStyle = {
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'flex-end',
+  gap: '6px',
+  textAlign: 'right'
 };
 
 const groupPillStyle = {
@@ -598,9 +674,15 @@ const groupPillStyle = {
 };
 
 const dateStyle = {
-  color: '#cbd5e1',
-  fontWeight: '800',
+  color: '#dbeafe',
+  fontWeight: '900',
   fontSize: '14px'
+};
+
+const venueStyle = {
+  color: '#cbd5e1',
+  fontWeight: '700',
+  fontSize: '13px'
 };
 
 const teamsStyle = {
@@ -704,6 +786,16 @@ const alertStyle = {
 
 const savedStyle = {
   color: '#22c55e',
+  fontWeight: '900'
+};
+
+const closedStyle = {
+  color: '#f87171',
+  fontWeight: '900'
+};
+
+const missedStyle = {
+  color: '#f87171',
   fontWeight: '900'
 };
 

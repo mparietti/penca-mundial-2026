@@ -16,6 +16,7 @@ export default function PronosticosExtrasPage() {
   const [usuarioAuth, setUsuarioAuth] = useState(null);
   const [usuario, setUsuario] = useState(null);
   const [equipos, setEquipos] = useState([]);
+  const [mundialComenzado, setMundialComenzado] = useState(false);
   const [form, setForm] = useState({
     campeon_id: '',
     goleador: '',
@@ -45,6 +46,17 @@ export default function PronosticosExtrasPage() {
       .single();
 
     setUsuario(perfil);
+
+    const { data: primerPartido } = await supabase
+      .from('partidos')
+      .select('fecha_hora')
+      .order('fecha_hora', { ascending: true })
+      .limit(1)
+      .maybeSingle();
+
+    if (primerPartido) {
+      setMundialComenzado(new Date() >= new Date(primerPartido.fecha_hora));
+    }
 
     const { data: equiposData } = await supabase
       .from('equipos')
@@ -83,6 +95,11 @@ export default function PronosticosExtrasPage() {
     e.preventDefault();
     setMensaje('');
 
+    if (mundialComenzado) {
+      setMensaje('Ya no se permiten estas apuestas, el Mundial ha comenzado.');
+      return;
+    }
+
     const { error } = await supabase
       .from('apuestas_extras')
       .upsert(
@@ -99,8 +116,8 @@ export default function PronosticosExtrasPage() {
       );
 
     if (error) {
-      console.error(error);
-      setMensaje('Error al guardar los pronósticos extra.');
+      console.error('Error apuestas extras:', JSON.stringify(error, null, 2));
+      setMensaje(`Error al guardar: ${error.message || 'sin detalle'}`);
       return;
     }
 
@@ -166,6 +183,35 @@ export default function PronosticosExtrasPage() {
             </div>
           </div>
 
+          <div
+            style={{
+              ...warningBoxStyle,
+              borderColor: mundialComenzado
+                ? 'rgba(248,113,113,0.55)'
+                : 'rgba(255,210,31,0.45)',
+              backgroundColor: mundialComenzado
+                ? 'rgba(248,113,113,0.14)'
+                : 'rgba(255,210,31,0.12)',
+              color: mundialComenzado ? '#fecaca' : '#fff7cc'
+            }}
+          >
+            {!mundialComenzado ? (
+              <>
+                <strong>⚠️ Importante</strong>
+                <p>
+                  Estas apuestas no se podrán realizar luego del inicio del partido inaugural de la Copa del Mundo.
+                </p>
+              </>
+            ) : (
+              <>
+                <strong>🔒 Pronósticos extras cerrados</strong>
+                <p>
+                  Ya no se permiten estas apuestas, el Mundial ha comenzado.
+                </p>
+              </>
+            )}
+          </div>
+
           <form onSubmit={guardar} style={formCardStyle}>
             <label style={labelStyle}>
               Campeón
@@ -173,7 +219,12 @@ export default function PronosticosExtrasPage() {
                 name="campeon_id"
                 value={form.campeon_id}
                 onChange={handleChange}
-                style={selectStyle}
+                disabled={mundialComenzado}
+                style={{
+                  ...selectStyle,
+                  opacity: mundialComenzado ? 0.55 : 1,
+                  cursor: mundialComenzado ? 'not-allowed' : 'pointer'
+                }}
               >
                 <option value="">Seleccionar campeón</option>
                 {equipos.map((equipo) => (
@@ -192,7 +243,12 @@ export default function PronosticosExtrasPage() {
                 placeholder="Ej: Darwin Núñez"
                 value={form.goleador}
                 onChange={handleChange}
-                style={inputStyle}
+                disabled={mundialComenzado}
+                style={{
+                  ...inputStyle,
+                  opacity: mundialComenzado ? 0.55 : 1,
+                  cursor: mundialComenzado ? 'not-allowed' : 'text'
+                }}
               />
             </label>
 
@@ -202,7 +258,12 @@ export default function PronosticosExtrasPage() {
                 name="equipo_menos_goleado_id"
                 value={form.equipo_menos_goleado_id}
                 onChange={handleChange}
-                style={selectStyle}
+                disabled={mundialComenzado}
+                style={{
+                  ...selectStyle,
+                  opacity: mundialComenzado ? 0.55 : 1,
+                  cursor: mundialComenzado ? 'not-allowed' : 'pointer'
+                }}
               >
                 <option value="">Seleccionar equipo</option>
                 {equipos.map((equipo) => (
@@ -213,12 +274,33 @@ export default function PronosticosExtrasPage() {
               </select>
             </label>
 
-            <button type="submit" style={submitButtonStyle}>
+            <button
+              type="submit"
+              disabled={mundialComenzado}
+              style={{
+                ...submitButtonStyle,
+                opacity: mundialComenzado ? 0.55 : 1,
+                cursor: mundialComenzado ? 'not-allowed' : 'pointer'
+              }}
+            >
               Guardar pronósticos extras
             </button>
 
             {mensaje && (
-              <div style={messageStyle}>
+              <div
+                style={{
+                  ...messageStyle,
+                  backgroundColor: mensaje.startsWith('Error') || mensaje.startsWith('Ya no')
+                    ? 'rgba(239,68,68,0.16)'
+                    : 'rgba(34,197,94,0.16)',
+                  borderColor: mensaje.startsWith('Error') || mensaje.startsWith('Ya no')
+                    ? 'rgba(239,68,68,0.45)'
+                    : 'rgba(34,197,94,0.45)',
+                  color: mensaje.startsWith('Error') || mensaje.startsWith('Ya no')
+                    ? '#fecaca'
+                    : '#bbf7d0'
+                }}
+              >
                 {mensaje}
               </div>
             )}
@@ -369,6 +451,14 @@ const subtitleStyle = {
   margin: 0
 };
 
+const warningBoxStyle = {
+  border: '1px solid',
+  borderRadius: '22px',
+  padding: '18px 22px',
+  marginBottom: '22px',
+  fontWeight: '800'
+};
+
 const formCardStyle = {
   backgroundColor: 'rgba(7, 17, 31, 0.82)',
   border: '1px solid rgba(255,255,255,0.14)',
@@ -419,8 +509,6 @@ const messageStyle = {
   marginTop: '4px',
   padding: '13px 15px',
   borderRadius: '14px',
-  backgroundColor: 'rgba(34,197,94,0.16)',
-  border: '1px solid rgba(34,197,94,0.45)',
-  color: '#bbf7d0',
+  border: '1px solid',
   fontWeight: '800'
 };
