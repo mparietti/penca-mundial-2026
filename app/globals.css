@@ -1,26 +1,171 @@
-@import "tailwindcss";
-
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+* {
+  box-sizing: border-box;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@media (max-width: 768px) {
+  main {
+    width: 100%;
+  }
+
+  header {
+    padding: 0 16px !important;
+  }
+
+  header a {
+    font-size: 16px !important;
+  }
+
+  header h1 {
+    font-size: 18px !important;
+  }
+
+  aside {
+    position: static !important;
+    width: 100% !important;
+    border-radius: 20px !important;
+  }
+
+  section {
+    max-width: 100% !important;
+  }
+
+  table {
+    font-size: 12px;
+  }
+
+  input,
+  select,
+  button {
+    max-width: 100%;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@media (max-width: 768px) {
+  .app-layout {
+    display: flex !important;
+    flex-direction: column !important;
+    padding: 16px !important;
+    gap: 18px !important;
+  }
+
+  .app-sidebar {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 10px !important;
+    padding: 16px !important;
+  }
+
+  .app-sidebar h3 {
+    grid-column: 1 / -1;
+  }
+
+  .app-sidebar a {
+    margin-bottom: 0 !important;
+    text-align: center;
+    font-size: 13px;
+    padding: 12px 8px !important;
+  }
+
+  .app-content {
+    max-width: 100% !important;
+  }
+
+  .hero-panel {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    padding: 22px !important;
+  }
+
+  .hero-title {
+    font-size: 32px !important;
+  }
+
+  .stats-box {
+    width: 100%;
+  }
+
+  .rules-grid {
+    grid-template-columns: 1fr 1fr !important;
+  }
+
+  .match-card {
+    padding: 18px !important;
+  }
+
+  .match-header {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+  }
+
+  .date-venue {
+    align-items: flex-start !important;
+    text-align: left !important;
+  }
+
+  .teams-grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+
+  .versus {
+    text-align: center;
+  }
+
+  .team {
+    justify-content: center !important;
+  }
+
+  .team-name {
+    font-size: 18px !important;
+  }
+
+  .prediction-row {
+    flex-wrap: wrap !important;
+  }
+
+  .prediction-row button {
+    width: 100%;
+  }
+
+  .ranking-table-header,
+  .ranking-row {
+    grid-template-columns: 40px 1fr 80px !important;
+  }
+
+  .ranking-table-header span:nth-child(4),
+  .ranking-table-header span:nth-child(5),
+  .ranking-row span:nth-child(4),
+  .ranking-row span:nth-child(5) {
+    display: none;
+  }
+
+  .podium {
+    flex-direction: column !important;
+    align-items: center !important;
+    min-height: auto !important;
+    gap: 24px !important;
+  }
+
+  .podium-user {
+    width: 100% !important;
+    max-width: 260px;
+  }
+
+  .groups-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .group-card {
+    overflow-x: auto;
+  }
+
+  .extras-grid {
+    grid-template-columns: 1fr !important;
+  }
 }

@@ -127,7 +127,7 @@ export default function ResultadosPage() {
 
             <div style={statsMiniBoxStyle}>
               <strong>{partidos.length}</strong>
-              <span>finalizados</span>
+              <span>partidos finalizados</span>
             </div>
           </div>
 
@@ -371,12 +371,16 @@ const subtitleStyle = {
 };
 
 const statsMiniBoxStyle = {
-  minWidth: '150px',
+  minWidth: '160px',
   backgroundColor: 'rgba(255,255,255,0.08)',
+  border: '1px solid rgba(255,255,255,0.14)',
   borderRadius: '22px',
   padding: '20px',
   textAlign: 'center',
-  color: '#dbeafe'
+  color: '#dbeafe',
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '4px'
 };
 
 const emptyStyle = {
