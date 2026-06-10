@@ -110,7 +110,7 @@ export default function RegisterPage() {
               <input
                 type="text"
                 name="nombre"
-                placeholder="Ej: Martín"
+                placeholder="Ej: Pedro"
                 value={form.nombre}
                 onChange={handleChange}
                 required
@@ -136,7 +136,7 @@ export default function RegisterPage() {
               <input
                 type="text"
                 name="login"
-                placeholder="Ej: pedro"
+                placeholder="Ej: pgonzalez"
                 value={form.login}
                 onChange={handleChange}
                 required
