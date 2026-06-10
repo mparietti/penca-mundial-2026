@@ -246,7 +246,7 @@ export default function PosicionesPage() {
                       {u.iniciales}
                     </div>
 
-                    <strong>@{u.login}</strong>
+                    <strong>{u.login}</strong>
                   </div>
 
                   <strong style={pointsRowStyle}>{u.puntos}</strong>
