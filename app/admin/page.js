@@ -177,7 +177,7 @@ const finalizarExtras = async (e) => {
         <Link href="/dashboard" style={brandStyle}>Penca Ladri Mundial 2026</Link>
 
         <details style={userMenuStyle}>
-          <summary style={userNameStyle}>@{usuario?.login}</summary>
+          <summary style={userNameStyle}>{usuario?.login}</summary>
           <button onClick={cerrarSesion} style={logoutDropdownStyle}>Cerrar sesión</button>
         </details>
       </header>

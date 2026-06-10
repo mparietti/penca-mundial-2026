@@ -138,7 +138,7 @@ export default function GruposPage() {
         </Link>
 
         <details style={userMenuStyle}>
-          <summary style={userNameStyle}>@{usuario?.login}</summary>
+          <summary style={userNameStyle}>{usuario?.login}</summary>
 
           <button onClick={cerrarSesion} style={logoutDropdownStyle}>
             Cerrar sesión
