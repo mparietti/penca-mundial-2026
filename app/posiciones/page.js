@@ -75,7 +75,15 @@ export default function PosicionesPage() {
 		  (u.apuestas_extras?.puntos_goleador || 0) +
 		  (u.apuestas_extras?.puntos_equipo_menos_goleado || 0) +
 		  (u.apuestas_extras?.puntos_equipo_mas_goleador || 0);
+	  
+	  const aciertos5 = u.pronosticos?.filter(
+	    (p) => p.puntos_obtenidos === 5
+	  ).length || 0;
 
+	  const aciertos3 = u.pronosticos?.filter(
+		(p) => p.puntos_obtenidos === 3
+	  ).length || 0;
+	  
 	  const puntos = puntosPartidos + puntosExtras;
 
 	  const pronosticosCargados = u.pronosticos?.length || 0;
@@ -92,13 +100,17 @@ export default function PosicionesPage() {
 		puntosPartidos,
 		puntosExtras,
 		pronosticosCargados,
-		exactos
+		exactos,
+		aciertos5,
+		aciertos3
 	  };
 	})
       .sort((a, b) => {
-        if (b.puntos !== a.puntos) return b.puntos - a.puntos;
-        if (b.exactos !== a.exactos) return b.exactos - a.exactos;
-        return a.login.localeCompare(b.login);
+		  if (b.puntos !== a.puntos) return b.puntos - a.puntos;
+		  if (b.exactos !== a.exactos) return b.exactos - a.exactos;
+		  if (b.aciertos5 !== a.aciertos5) return b.aciertos5 - a.aciertos5;
+		  if (b.aciertos3 !== a.aciertos3) return b.aciertos3 - a.aciertos3;
+		  return a.login.localeCompare(b.login);
       });
 
     setRanking(rankingCalculado);
