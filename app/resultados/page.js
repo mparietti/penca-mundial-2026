@@ -207,6 +207,16 @@ export default function ResultadosPage() {
                       </span>
                     )}
                   </div>
+				  
+				  <div style={predictionsButtonContainerStyle}>
+					  <Link
+						href={`/predicciones/${partido.id}`}
+						style={groupPredictionsButtonStyle}
+					  >
+						👀 Ver pronósticos y puntos
+					  </Link>
+				  </div>
+				  
                 </div>
               );
             })}
@@ -481,4 +491,26 @@ const pointsStyle = {
 const alertStyle = {
   color: '#fbbf24',
   fontWeight: '900'
+};
+
+const groupPredictionsButtonStyle = {
+  display: 'inline-flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  gap: '8px',
+  padding: '14px 24px',
+  borderRadius: '999px',
+  backgroundColor: '#ffd21f',
+  color: '#07111f',
+  textDecoration: 'none',
+  fontWeight: '900',
+  fontSize: '15px',
+  boxShadow: '0 0 20px rgba(255,210,31,0.35)',
+  transition: 'all 0.2s ease'
+};
+
+const predictionsButtonContainerStyle = {
+  display: 'flex',
+  justifyContent: 'center',
+  marginTop: '18px'
 };

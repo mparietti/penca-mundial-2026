@@ -51,7 +51,8 @@ export default function PosicionesPage() {
 		apuestas_extras (
 		  puntos_campeon,
 		  puntos_goleador,
-		  puntos_equipo_menos_goleado
+		  puntos_equipo_menos_goleado,
+		  puntos_equipo_mas_goleador
 		)
 	  `)
 	  .eq('activo', true);
@@ -72,7 +73,8 @@ export default function PosicionesPage() {
 	  const puntosExtras =
 		  (u.apuestas_extras?.puntos_campeon || 0) +
 		  (u.apuestas_extras?.puntos_goleador || 0) +
-		  (u.apuestas_extras?.puntos_equipo_menos_goleado || 0);
+		  (u.apuestas_extras?.puntos_equipo_menos_goleado || 0) +
+		  (u.apuestas_extras?.puntos_equipo_mas_goleador || 0);
 
 	  const puntos = puntosPartidos + puntosExtras;
 

@@ -20,7 +20,8 @@ export default function PronosticosExtrasPage() {
   const [form, setForm] = useState({
     campeon_id: '',
     goleador: '',
-    equipo_menos_goleado_id: ''
+    equipo_menos_goleado_id: '',
+	equipo_mas_goleador_id: ''
   });
   const [mensaje, setMensaje] = useState('');
   const [cargando, setCargando] = useState(true);
@@ -67,7 +68,7 @@ export default function PronosticosExtrasPage() {
 
     const { data: apuesta } = await supabase
       .from('apuestas_extras')
-      .select('campeon_id, goleador, equipo_menos_goleado_id')
+      .select('campeon_id, goleador, equipo_menos_goleado_id, equipo_mas_goleador_id')
       .eq('usuario_id', authData.user.id)
       .maybeSingle();
 
@@ -75,7 +76,8 @@ export default function PronosticosExtrasPage() {
       setForm({
         campeon_id: apuesta.campeon_id || '',
         goleador: apuesta.goleador || '',
-        equipo_menos_goleado_id: apuesta.equipo_menos_goleado_id || ''
+        equipo_menos_goleado_id: apuesta.equipo_menos_goleado_id || '',
+		equipo_mas_goleador_id: apuesta.equipo_mas_goleador_id || ''
       });
     }
 
@@ -108,6 +110,7 @@ export default function PronosticosExtrasPage() {
           campeon_id: form.campeon_id || null,
           goleador: form.goleador.trim() || null,
           equipo_menos_goleado_id: form.equipo_menos_goleado_id || null,
+		  equipo_mas_goleador_id: form.equipo_mas_goleador_id || null,
           fecha_modificacion: new Date().toISOString()
         },
         {
@@ -257,6 +260,28 @@ export default function PronosticosExtrasPage() {
               <select
                 name="equipo_menos_goleado_id"
                 value={form.equipo_menos_goleado_id}
+                onChange={handleChange}
+                disabled={mundialComenzado}
+                style={{
+                  ...selectStyle,
+                  opacity: mundialComenzado ? 0.55 : 1,
+                  cursor: mundialComenzado ? 'not-allowed' : 'pointer'
+                }}
+              >
+                <option value="">Seleccionar equipo</option>
+                {equipos.map((equipo) => (
+                  <option key={equipo.id} value={equipo.id}>
+                    {equipo.nombre}
+                  </option>
+                ))}
+              </select>
+            </label>
+
+            <label style={labelStyle}>
+              Equipo más goleador
+              <select
+                name="equipo_mas_goleador_id"
+                value={form.equipo_mas_goleador_id}
                 onChange={handleChange}
                 disabled={mundialComenzado}
                 style={{

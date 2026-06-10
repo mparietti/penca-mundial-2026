@@ -250,17 +250,6 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          <div style={rulesBoxStyle}>
-            <h3 style={rulesTitleStyle}>Sistema de puntuación</h3>
-
-            <div style={rulesGridStyle}>
-              <div style={ruleItemStyle}><strong>8</strong><span>Exacto</span></div>
-              <div style={ruleItemStyle}><strong>5</strong><span>Diferencia</span></div>
-              <div style={ruleItemStyle}><strong>3</strong><span>Ganador</span></div>
-              <div style={ruleItemStyle}><strong>0</strong><span>Sin acierto</span></div>
-            </div>
-          </div>
-
           {partidos.length === 0 && (
             <div style={emptyStyle}>
               No hay partidos pendientes para pronosticar.
@@ -398,7 +387,19 @@ export default function DashboardPage() {
                       <span style={savedStyle}>✓ Pronóstico cargado</span>
                     )}
                   </div>
-
+				  
+				  {partidoComenzado && (
+					  <div style={predictionsButtonContainerStyle}>
+						  <Link
+							href={`/predicciones/${partido.id}`}
+							style={groupPredictionsButtonStyle}
+						  >
+							👀 Ver pronósticos y puntos
+						  </Link>
+						</div>
+						)				  
+				  }
+										  
                   {mensajes[partido.id] && (
                     <p style={messageStyle}>
                       {mensajes[partido.id]}
@@ -805,4 +806,26 @@ const messageStyle = {
   color: '#dbeafe',
   textAlign: 'center',
   fontWeight: '800'
+};
+
+const groupPredictionsButtonStyle = {
+  display: 'inline-flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  gap: '8px',
+  padding: '14px 24px',
+  borderRadius: '999px',
+  backgroundColor: '#ffd21f',
+  color: '#07111f',
+  textDecoration: 'none',
+  fontWeight: '900',
+  fontSize: '15px',
+  boxShadow: '0 0 20px rgba(255,210,31,0.35)',
+  transition: 'all 0.2s ease'
+};
+
+const predictionsButtonContainerStyle = {
+  display: 'flex',
+  justifyContent: 'center',
+  marginTop: '18px'
 };

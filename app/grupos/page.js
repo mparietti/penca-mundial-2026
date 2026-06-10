@@ -186,7 +186,6 @@ export default function GruposPage() {
               <div key={grupo} style={groupCardStyle}>
                 <div style={groupHeaderStyle}>
                   <h2 style={groupTitleStyle}>Grupo {grupo}</h2>
-                  <span style={groupBadgeStyle}>4 selecciones</span>
                 </div>
 
                 <table style={tableStyle}>

@@ -19,12 +19,14 @@ export default function AdminPage() {
   const [equipos, setEquipos] = useState([]);
   const [resultados, setResultados] = useState({});
   const [extras, setExtras] = useState({
-    campeon_id: '',
-    goleador: '',
-    equipo_menos_goleado_id: '',
-    puntos_campeon: 10,
-    puntos_goleador: 10,
-    puntos_menos_goleado: 10
+	  campeon_id: '',
+	  goleador: '',
+	  equipo_menos_goleado_id: '',
+	  equipo_mas_goleador_id: '',
+	  puntos_campeon: 10,
+	  puntos_goleador: 10,
+	  puntos_menos_goleado: 10,
+	  puntos_mas_goleador: 10
   });
   const [mensaje, setMensaje] = useState('');
   const [cargando, setCargando] = useState(true);
@@ -127,31 +129,38 @@ export default function AdminPage() {
     });
   };
 
-  const finalizarExtras = async (e) => {
-    e.preventDefault();
+const finalizarExtras = async (e) => {
+  e.preventDefault();
 
-    if (!extras.campeon_id || !extras.goleador || !extras.equipo_menos_goleado_id) {
-      setMensaje('Completá campeón, goleador y equipo menos goleado.');
-      return;
-    }
+  if (
+    !extras.campeon_id ||
+    !extras.goleador ||
+    !extras.equipo_menos_goleado_id ||
+    !extras.equipo_mas_goleador_id
+  ) {
+    setMensaje('Completá campeón, goleador, equipo menos goleado y equipo más goleador.');
+    return;
+  }
 
-    const { error } = await supabase.rpc('finalizar_pronosticos_extras', {
-      p_campeon_id: extras.campeon_id,
-      p_goleador: extras.goleador,
-      p_equipo_menos_goleado_id: extras.equipo_menos_goleado_id,
-      p_puntos_campeon: Number(extras.puntos_campeon),
-      p_puntos_goleador: Number(extras.puntos_goleador),
-      p_puntos_menos_goleado: Number(extras.puntos_menos_goleado)
-    });
+  const { error } = await supabase.rpc('finalizar_pronosticos_extras', {
+    p_campeon_id: extras.campeon_id,
+    p_goleador: extras.goleador,
+    p_equipo_menos_goleado_id: extras.equipo_menos_goleado_id,
+    p_equipo_mas_goleador_id: extras.equipo_mas_goleador_id,
+    p_puntos_campeon: Number(extras.puntos_campeon),
+    p_puntos_goleador: Number(extras.puntos_goleador),
+    p_puntos_menos_goleado: Number(extras.puntos_menos_goleado),
+    p_puntos_mas_goleador: Number(extras.puntos_mas_goleador)
+  });
 
-    if (error) {
-		console.error('Error finalizar extras:', JSON.stringify(error, null, 2));
-		setMensaje(`Error al finalizar pronósticos extra: ${error.message || 'sin detalle'}`);
-		return;
-	}
+  if (error) {
+    console.error('Error finalizar extras:', JSON.stringify(error, null, 2));
+    setMensaje(`Error al finalizar pronósticos extra: ${error.message || 'sin detalle'}`);
+    return;
+  }
 
-    setMensaje('Pronósticos extra finalizados. Se actualizaron los puntos extra en la tabla apuestas_extras.');
-  };
+  setMensaje('Pronósticos extra finalizados correctamente.');
+};
 
   const cerrarSesion = async () => {
     await supabase.auth.signOut();
@@ -312,6 +321,34 @@ export default function AdminPage() {
                 Puntos menos goleado
                 <input name="puntos_menos_goleado" type="number" value={extras.puntos_menos_goleado} onChange={cambiarExtra} style={inputStyle} />
               </label>
+			  
+			  <label style={labelStyle}>
+				Equipo más goleador real
+				  <select
+					name="equipo_mas_goleador_id"
+					value={extras.equipo_mas_goleador_id}
+					onChange={cambiarExtra}
+					style={selectStyle}
+				  >
+					<option value="">Seleccionar</option>
+					{equipos.map((e) => (
+					  <option key={e.id} value={e.id}>
+						{e.nombre}
+					  </option>
+					))}
+				  </select>
+				</label>
+
+				<label style={labelStyle}>
+				  Puntos más goleador
+				  <input
+					name="puntos_mas_goleador"
+					type="number"
+					value={extras.puntos_mas_goleador}
+					onChange={cambiarExtra}
+					style={inputStyle}
+				  />
+			  </label>
 
               <button type="submit" style={wideButtonStyle}>
                 Finalizar pronósticos extras
