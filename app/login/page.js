@@ -84,7 +84,7 @@ export default function LoginPage() {
               <input
                 type="text"
                 name="login"
-                placeholder="Ej: martin"
+                placeholder="Ej: pedro"
                 value={form.login}
                 onChange={handleChange}
                 required
