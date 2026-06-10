@@ -86,7 +86,7 @@ export default function ReglasPage() {
             <div style={exampleGridStyle}>
               <ExampleItem pronostico="2 - 1" puntos="8 pts" texto="Resultado exacto" />
               <ExampleItem pronostico="3 - 2" puntos="5 pts" texto="Misma diferencia" />
-              <ExampleItem pronostico="1 - 0" puntos="3 pts" texto="Mismo ganador" />
+              <ExampleItem pronostico="2 - 0" puntos="3 pts" texto="Mismo ganador" />
               <ExampleItem pronostico="0 - 1" puntos="0 pts" texto="No acierta" />
             </div>
           </div>
