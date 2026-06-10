@@ -207,7 +207,7 @@ export default function DashboardPage() {
         </Link>
 
         <details style={userMenuStyle}>
-          <summary style={userNameStyle}>@{usuario?.login}</summary>
+          <summary style={userNameStyle}>{usuario?.login}</summary>
 
           <button onClick={cerrarSesion} style={logoutDropdownStyle}>
             Cerrar sesión
@@ -321,38 +321,48 @@ export default function DashboardPage() {
 
                     <div style={predictionStyle}>
                       <input
-                        type="number"
-                        min="0"
-                        placeholder={sinPronostico && bloqueado ? '-' : '0'}
-                        value={sinPronostico && bloqueado ? '' : pronostico.goles_local ?? ''}
-                        disabled={bloqueado}
-                        onChange={(e) =>
-                          cambiarPronostico(partido.id, 'goles_local', e.target.value)
-                        }
-                        style={{
-                          ...inputStyle,
-                          opacity: bloqueado ? 0.55 : 1,
-                          cursor: bloqueado ? 'not-allowed' : 'text'
-                        }}
-                      />
+						  type="text"
+						  inputMode="numeric"
+						  pattern="[0-9]*"
+						  placeholder="-"
+						  value={sinPronostico && bloqueado ? '' : pronostico.goles_local ?? ''}
+						  disabled={bloqueado}
+						  onChange={(e) => {
+							const valor = e.target.value;
+
+							if (/^\d*$/.test(valor)) {
+							  cambiarPronostico(partido.id, 'goles_local', valor);
+							}
+						  }}
+						  style={{
+							...inputStyle,
+							opacity: bloqueado ? 0.55 : 1,
+							cursor: bloqueado ? 'not-allowed' : 'text'
+						  }}
+						/>
 
                       <span style={predictionSeparatorStyle}>-</span>
 
                       <input
-                        type="number"
-                        min="0"
-                        placeholder={sinPronostico && bloqueado ? '-' : '0'}
-                        value={sinPronostico && bloqueado ? '' : pronostico.goles_visitante ?? ''}
-                        disabled={bloqueado}
-                        onChange={(e) =>
-                          cambiarPronostico(partido.id, 'goles_visitante', e.target.value)
-                        }
-                        style={{
-                          ...inputStyle,
-                          opacity: bloqueado ? 0.55 : 1,
-                          cursor: bloqueado ? 'not-allowed' : 'text'
-                        }}
-                      />
+						  type="text"
+						  inputMode="numeric"
+						  pattern="[0-9]*"
+						  placeholder="-"
+						  value={sinPronostico && bloqueado ? '' : pronostico.goles_visitante ?? ''}
+						  disabled={bloqueado}
+						  onChange={(e) => {
+							const valor = e.target.value;
+
+							if (/^\d*$/.test(valor)) {
+							  cambiarPronostico(partido.id, 'goles_visitante', valor);
+							}
+						  }}
+						  style={{
+							...inputStyle,
+							opacity: bloqueado ? 0.55 : 1,
+							cursor: bloqueado ? 'not-allowed' : 'text'
+						  }}
+						/>
 
                       <button
                         onClick={() => guardarPronostico(partido.id)}
