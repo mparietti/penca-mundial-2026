@@ -68,7 +68,6 @@ export default function ReglasPage() {
           <Link href="/pronosticos-extras" style={menuLinkStyle}>🎯 Pronósticos extras</Link>
           <Link href="/posiciones" style={menuLinkStyle}>🏆 Posiciones</Link>
           <Link href="/reglas" style={activeMenuLinkStyle}>📋 Reglas de puntuación</Link>
-          <Link href="/noticias" style={menuLinkStyle}>📰 Noticias</Link>
 
           {usuario?.es_admin && (
             <Link href="/admin" style={menuLinkStyle}>⚙️ Admin</Link>

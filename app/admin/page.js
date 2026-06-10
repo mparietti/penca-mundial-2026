@@ -191,7 +191,6 @@ const finalizarExtras = async (e) => {
           <Link href="/pronosticos-extras" style={menuLinkStyle}>🎯 Pronósticos extras</Link>
           <Link href="/posiciones" style={menuLinkStyle}>🏆 Posiciones</Link>
           <Link href="/reglas" style={menuLinkStyle}>📋 Reglas</Link>
-          <Link href="/noticias" style={menuLinkStyle}>📰 Noticias</Link>
           <Link href="/admin" style={activeMenuLinkStyle}>⚙️ Admin</Link>
         </aside>
 
